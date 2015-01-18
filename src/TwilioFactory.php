@@ -12,6 +12,8 @@
 
 namespace NotifyMeHQ\Twilio;
 
+use GuzzleHttp\Client;
+use NotifyMeHQ\NotifyMe\Arr;
 use NotifyMeHQ\NotifyMe\FactoryInterface;
 
 class TwilioFactory implements FactoryInterface
@@ -25,6 +27,10 @@ class TwilioFactory implements FactoryInterface
      */
     public function make(array $config)
     {
-        return new TwilioGateway($config);
+        Arr::requires($config, ['from', 'client', 'token']);
+
+        $client = new Client();
+
+        return new TwilioGateway($client, $config);
     }
 }
