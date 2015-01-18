@@ -27,13 +27,6 @@ class TwilioGateway extends AbstractGateway implements GatewayInterface
     protected $endpoint = 'https://api.twilio.com';
 
     /**
-     * Gateway display name.
-     *
-     * @var string
-     */
-    protected $displayName = 'twilio';
-
-    /**
      * Twillio api version.
      *
      * @var string
