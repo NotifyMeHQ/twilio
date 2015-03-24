@@ -76,7 +76,7 @@ class TwilioGateway implements GatewayInterface
     public function notify($to, $message, array $options = [])
     {
         $options['to'] = $to;
-        
+
         $this->config['client'] = Arr::get($options, 'client', $this->config['client']);
         $this->config['token'] = Arr::get($options, 'token', $this->config['token']);
 
