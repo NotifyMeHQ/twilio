@@ -13,7 +13,7 @@ namespace NotifyMeHQ\Twilio;
 
 use GuzzleHttp\Client;
 use NotifyMeHQ\NotifyMe\Arr;
-use NotifyMeHQ\NotifyMe\GatewayInterface;
+use NotifyMeHQ\Contracts\GatewayInterface;
 use NotifyMeHQ\NotifyMe\HttpGatewayTrait;
 use NotifyMeHQ\NotifyMe\Response;
 
@@ -70,7 +70,7 @@ class TwilioGateway implements GatewayInterface
      * @param string   $message
      * @param string[] $options
      *
-     * @return \NotifyMeHQ\NotifyMe\Response
+     * @return \NotifyMeHQ\Contracts\ResponseInterface
      */
     public function notify($to, $message, array $options = [])
     {
@@ -152,7 +152,7 @@ class TwilioGateway implements GatewayInterface
      * @param bool  $success
      * @param array $response
      *
-     * @return \NotifyMeHQ\NotifyMe\Response
+     * @return \NotifyMeHQ\Contracts\ResponseInterface
      */
     protected function mapResponse($success, $response)
     {
