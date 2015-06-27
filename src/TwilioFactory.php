@@ -12,8 +12,8 @@
 namespace NotifyMeHQ\Twilio;
 
 use GuzzleHttp\Client;
-use NotifyMeHQ\NotifyMe\Arr;
 use NotifyMeHQ\Contracts\FactoryInterface;
+use NotifyMeHQ\NotifyMe\Arr;
 
 class TwilioFactory implements FactoryInterface
 {
