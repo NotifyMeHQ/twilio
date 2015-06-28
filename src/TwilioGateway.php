@@ -13,7 +13,6 @@ namespace NotifyMeHQ\Twilio;
 
 use GuzzleHttp\Client;
 use NotifyMeHQ\Contracts\GatewayInterface;
-use NotifyMeHQ\NotifyMe\Arr;
 use NotifyMeHQ\NotifyMe\HttpGatewayTrait;
 use NotifyMeHQ\NotifyMe\Response;
 
