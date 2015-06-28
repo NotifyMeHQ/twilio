@@ -97,7 +97,7 @@ class TwilioGateway implements GatewayInterface
             'body' => $params,
         ]);
 
-        (substr((string) $rawResponse->getStatusCode(), 0, 1) === '2')
+        if (substr((string) $rawResponse->getStatusCode(), 0, 1) === '2') {
             $response = $rawResponse->json();
             $success = true;
         } else {
