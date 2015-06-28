@@ -22,32 +22,18 @@ class TwilioGateway implements GatewayInterface
     use HttpGatewayTrait;
 
     /**
-     * Gateway api endpoint.
+     * The api endpoint.
      *
      * @var string
      */
     protected $endpoint = 'https://api.twilio.com';
 
     /**
-     * Twillio api version.
+     * The api version.
      *
      * @var string
      */
     protected $version = '2010-04-01';
-
-    /**
-     * The http client.
-     *
-     * @var \GuzzleHttp\Client
-     */
-    protected $client;
-
-    /**
-     * Configuration options.
-     *
-     * @var string[]
-     */
-    protected $config;
 
     /**
      * Create a new twillo gateway instance.
@@ -66,60 +52,35 @@ class TwilioGateway implements GatewayInterface
     /**
      * Send a notification.
      *
-     * @param string   $to
-     * @param string   $message
-     * @param string[] $options
+     * @param string $to
+     * @param string $message
      *
      * @return \NotifyMeHQ\Contracts\ResponseInterface
      */
-    public function notify($to, $message, array $options = [])
+    public function notify($to, $message)
     {
-        $options['to'] = $to;
+        $params = [
+            'From' => $this->config['from'],
+            'To'   => $to,
+            'Body' => $message,
+        ];
 
-        $this->config['client'] = Arr::get($options, 'client', $this->config['client']);
-        $this->config['token'] = Arr::get($options, 'token', $this->config['token']);
-
-        unset($options['client']);
-        unset($options['token']);
-
-        $params = $this->addMessage($message, $params, $options);
-
-        return $this->commit('post', $this->buildUrlFromString('Accounts/'.$this->config['client'].'/SMS/Messages.json'), $params);
+        return $this->send($this->buildUrlFromString('Accounts/'.$this->config['client'].'/SMS/Messages.json'), $params);
     }
 
     /**
-     * Add a message to the request.
+     * Send the notification over the wire.
      *
-     * @param string   $message
-     * @param string[] $params
-     * @param string[] $options
-     *
-     * @return array
-     */
-    protected function addMessage($message, array $params, array $options)
-    {
-        $params['From'] = Arr::get($options, 'from', $this->config['from']);
-        $params['To'] = Arr::get($options, 'to', '');
-        $params['Body'] = $message;
-
-        return $params;
-    }
-
-    /**
-     * Commit a HTTP request.
-     *
-     * @param string   $method
      * @param string   $url
      * @param string[] $params
-     * @param string[] $options
      *
-     * @return mixed
+     * @return \NotifyMeHQ\Contracts\ResponseInterface
      */
-    protected function commit($method = 'post', $url, array $params = [], array $options = [])
+    protected function send($url, array $params)
     {
         $success = false;
 
-        $rawResponse = $this->client->{$method}($url, [
+        $rawResponse = $this->client->post($url, [
             'exceptions'      => false,
             'timeout'         => '80',
             'connect_timeout' => '30',
@@ -129,15 +90,15 @@ class TwilioGateway implements GatewayInterface
                 $this->config['token'],
             ],
             'headers' => [
+                'Accept'         => 'application/json',
                 'Accept-Charset' => 'utf-8',
                 'Content-Type'   => 'application/x-www-form-urlencoded',
-                'User-Agent'     => 'notifyme/3.12.8 (php '.phpversion().')',
             ],
             'body' => $params,
         ]);
 
         if ($rawResponse->getStatusCode() == 201) {
-            $response = $this->parseResponse($rawResponse->getBody());
+            $response = $rawResponse->json();
             $success = true;
         } else {
             $response = $this->responseError($rawResponse);
@@ -147,7 +108,7 @@ class TwilioGateway implements GatewayInterface
     }
 
     /**
-     * Map HTTP response to response object.
+     * Map the raw response to our response object.
      *
      * @param bool  $success
      * @param array $response
@@ -165,7 +126,7 @@ class TwilioGateway implements GatewayInterface
     /**
      * Get the default json response.
      *
-     * @param string $rawResponse
+     * @param \GuzzleHttp\Message\ResponseInterface $rawResponse
      *
      * @return array
      */
